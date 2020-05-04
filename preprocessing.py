@@ -1,9 +1,18 @@
 import random
 import logging
+import pandas as pd
 
 from eda import load_in_data
 
 logging.basicConfig(level=logging.INFO)
+
+train_data_filepath = '../VU_DMT_assignment2/training_set_VU_DM.csv'
+cleaned_filepath = '../VU_DMT_assignment2/cleaned_training_data.csv'
+
+def date_col_to_datetime(data):
+    data['date_time'] = pd.to_datetime(date['date_time'])
+    logging.info(f'Converted date_time column in data to datetime format.')
+    return data
 
 
 def remove_nan_columns(data):
@@ -41,10 +50,8 @@ def impute_nan_values(df2, cleaned_filepath):
 
 
 def run():
-    train_data_filepath = '../VU_DMT_assignment2/training_set_VU_DM.csv'
-    cleaned_filepath = '../VU_DMT_assignment2/cleaned_training_data.csv'
-
     data = load_in_data(train_data_filepath)
+    data = date_col_to_datetime(data)
     data = remove_nan_columns(data)
     impute_nan_values(data, cleaned_filepath)
 

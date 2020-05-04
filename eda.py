@@ -1,20 +1,50 @@
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
 import logging
+
+import matplotlib.pyplot as plt
+import missingno as msno
+import pandas as pd
+import seaborn as sns
 
 logging.basicConfig(level=logging.INFO)
 
+training_filepath = '../VU_DMT_assignment2/training_set_VU_DM.csv'
+test_filepath = '../VU_DMT_assignment2/test_set_VU_DM.csv'
 
-def load_in_data(training_data_filepath):
-    data = pd.read_csv(training_data_filepath)
+cleaned_training_filepath = '../VU_DMT_assignment2/cleaned_training_data.csv'
+
+
+def load_in_data(csv_data_filepath):
+    """
+    Function to load in the data (.csv format). Logs the shape of the DataFrame (rows, columns)
+        and the number of columns as well as a list of all columns in the DataFrame
+
+    :param csv_data_filepath: path to a .csv file that contains the data
+    :return: data (pd.DataFrame)
+    """
+    data = pd.read_csv(csv_data_filepath)
+    data.info()
     return data
 
 
-def missing_values_heatmap(data):  # TODO: Make sure it fits the image.
-    ax = sns.heatmap(data.isnull(), yticklabels=False, cbar=False, cmap='viridis')
-    fig = ax.get_figure()
+def get_missing_values(data):
+    msno_matrix = msno.matrix(data)
+    fig = msno_matrix.get_figure()
     fig.savefig('./figures/missing_values.png')
+
+
+def missing_values_heatmap(data):  # TODO: Make sure it fits the image.
+    ax = sns.heatmap(data.isnull(), cbar=False)
+    fig = ax.get_figure()
+    fig.savefig('./figures/EDA_missing_values.png')
+
+
+def explore_prop_id(data):  # TODO: Fix plot
+    logging.info(f"Most commonly checked out property IDs: {data['prop_id'].value_counts().head()}")
+    n, bins, patches = plt.hist(data.prop_id, 100, facecolor='blue')
+    plt.xlabel('Property ID')
+    plt.title('Histogram of property ID in the training dataset')
+    plt.style.use('ggplot')
+    plt.savefig('./figures/EDA_prop_id.png')
 
 
 def explore_country_figures(data):
@@ -108,10 +138,12 @@ def get_heatmap(data):
 # data = load_in_data(original_training_filepath)
 # explore_country_figures(data)
 def run():
-    original_filepath = '../VU_DMT_assignment2/training_set_VU_DM.csv'
-    cleaned_training_filepath = '../VU_DMT_assignment2/cleaned_training_data.csv'
-    data = load_in_data(original_filepath)
-    missing_values_heatmap(data)
+    # Load in the data for training and test.
+    training_data = load_in_data(training_filepath)
+    # test_data = load_in_data(test_filepath)
+
+    get_missing_values(training_data)
+    # explore_prop_id(training_data)
 
     # data = load_in_data(cleaned_training_filepath)
     # check_click_bool(data)
