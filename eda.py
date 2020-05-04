@@ -1,7 +1,7 @@
 import logging
+import pickle
 
 import matplotlib.pyplot as plt
-import missingno as msno
 import pandas as pd
 import seaborn as sns
 
@@ -22,25 +22,47 @@ def load_in_data(csv_data_filepath):
     :return: data (pd.DataFrame)
     """
     data = pd.read_csv(csv_data_filepath)
-    data.info()
+    # data.info()
     return data
 
 
-def get_missing_values(data):
-    msno_matrix = msno.matrix(data)
-    fig = msno_matrix.get_figure()
-    fig.savefig('./figures/missing_values.png')
+def get_missing_values(complete_df):
+    """
+    Find all features in the dataset with missing values, and the percentage of missing values.
+    Draw a bar graph that shows these missing values.
+    Log a list of missing values with over 90% missing that will be used later to remove columns.
 
+    :param complete_df: pandas DataFrame with the entire dataset.
+    """
+    # Find the features with missing values.
+    missing = complete_df.isnull().sum().to_frame()
+    missing = missing.loc[missing[0] != 0]
+    missing["percentage"] = (missing[0] / complete_df.shape[0] * 100)
+    missing.sort_values(by=["percentage"])
+    features = missing.index.to_list()
+    numbers = missing["percentage"].to_list()
 
-def missing_values_heatmap(data):  # TODO: Make sure it fits the image.
-    ax = sns.heatmap(data.isnull(), cbar=False)
-    fig = ax.get_figure()
-    fig.savefig('./figures/EDA_missing_values.png')
+    # Plot bar graph with missing value information.
+    plt.bar(features, numbers, color='lightblue', zorder=3)
+    plt.grid(color='grey', linestyle='dashed', alpha=0.5, zorder=0)
+    plt.xlabel('Feature value')
+    plt.xticks(rotation=90)
+    plt.ylabel('Percentage of entries missing')
+    plt.title('Missing values per feature')
+    plt.tight_layout()
+    plt.savefig('./figures/EDA_missing_values.png')
+
+    # Find which features contain over 90% missing values, which will be removed later.
+    delete = missing.loc[missing["percentage"] > 90]
+    feats_to_delete = delete.index.to_list()
+    logging.info(f"These features contain over 90% missing data: {feats_to_delete}.")
+    with open('pickles/feats_to_delete.pkl', 'wb') as f:
+        pickle.dump(feats_to_delete, f)
 
 
 def explore_prop_id(data):  # TODO: Fix plot
     logging.info(f"Most commonly checked out property IDs: {data['prop_id'].value_counts().head()}")
-    n, bins, patches = plt.hist(data.prop_id, 100, facecolor='blue')
+    plt.bar(data.prop_id, facecolor='blue')
     plt.xlabel('Property ID')
     plt.title('Histogram of property ID in the training dataset')
     plt.style.use('ggplot')
