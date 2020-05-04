@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.INFO)
 train_data_filepath = '../VU_DMT_assignment2/training_set_VU_DM.csv'
 cleaned_filepath = '../VU_DMT_assignment2/cleaned_training_data.csv'
 
-feats_to_delete_path = 'pickles/feats_to_delete.pkl'
+feats_to_delete_path = './pickles/feats_to_delete.pkl'
 
 
 def date_col_to_datetime(data):
@@ -63,14 +63,15 @@ def impute_nan_values(df2, cleaned_filepath):
     df['prop_location_score2'].fillna((df['prop_location_score2'].mean()), inplace=True)
 
     df['orig_destination_distance'].fillna((df['orig_destination_distance'].median()), inplace=True)
-    df.to_csv(cleaned_filepath)
+    return data
 
 
 def run():
     data = load_in_data(train_data_filepath)
-    data = date_col_to_datetime(data)
+    # data = date_col_to_datetime(data)
     data = remove_nan_columns(data)
-    impute_nan_values(data, cleaned_filepath)
+    # impute_nan_values(data, cleaned_filepath)
+    data.to_csv(cleaned_filepath)
 
 
 if __name__ == "__main__":

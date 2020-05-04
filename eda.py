@@ -60,13 +60,29 @@ def get_missing_values(complete_df):
         pickle.dump(feats_to_delete, f)
 
 
-def explore_prop_id(data):  # TODO: Fix plot
-    logging.info(f"Most commonly checked out property IDs: {data['prop_id'].value_counts().head()}")
-    plt.bar(data.prop_id, facecolor='blue')
-    plt.xlabel('Property ID')
-    plt.title('Histogram of property ID in the training dataset')
-    plt.style.use('ggplot')
-    plt.savefig('./figures/EDA_prop_id.png')
+def explore_prop_id(cleaned_data):
+    """
+    Explore the property IDs in the cleaned training dataset. The top 5 common properties are logged,
+        which can be used to develop a simple benchmark later.
+        Plot a line graph that shows the distribution of the property ideas over the dataset.
+        It's clear there's a Zipfian distribution of the data, with the most booked properties
+        clustering around a few examples.
+
+    :param cleaned_data: pandas DataFrame with the cleaned_dataset
+    """
+    # Load prop_id data from dataset.
+    ids = cleaned_data.prop_id.value_counts().to_frame()
+    logging.info(f"The 5 most common properties are {ids[:5]}.")
+    numbers = ids['prop_id'].to_list()
+
+    # Plot a line graph that shows the distribution of the property IDs over the dataset.
+    plt.plot(numbers, color='black', zorder=3)
+    plt.grid(color='grey', linestyle='dashed', alpha=0.5, zorder=0)
+    plt.xlabel('Number of properties')
+    plt.ylabel('Number of times appeared in the dataset')
+    plt.title('Property IDs in the training dataset')
+    plt.tight_layout()
+    plt.savefig('./figures/EDA_prop_ids.png')
 
 
 def explore_country_figures(data):
@@ -161,13 +177,16 @@ def get_heatmap(data):
 # explore_country_figures(data)
 def run():
     # Load in the data for training and test.
-    training_data = load_in_data(training_filepath)
+    # training_data = load_in_data(training_filepath)
     # test_data = load_in_data(test_filepath)
 
-    get_missing_values(training_data)
-    # explore_prop_id(training_data)
+    # get_missing_values(training_data)
 
-    # data = load_in_data(cleaned_training_filepath)
+    # Load in data after pre-processing and continue EDA
+    cleaned_training_data = load_in_data(cleaned_training_filepath)
+
+    explore_prop_id(cleaned_training_data)
+
     # check_click_bool(data)
     # search_length_of_stay(data)
     # search_adults_counts(data)
