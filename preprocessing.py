@@ -1,8 +1,6 @@
 import logging
 import pickle
-import random
 from datetime import datetime
-import numpy as np
 
 import pandas as pd
 
@@ -39,6 +37,7 @@ def get_month(x):
         return 1
     pass
 
+
 def get_hour(x):
     if x is not None and type(x) is not float:
         try:
@@ -48,6 +47,7 @@ def get_hour(x):
     else:
         return 1
     pass
+
 
 def get_timeblock(x):
     if x is not None and type(x) is not float:
@@ -63,6 +63,7 @@ def get_timeblock(x):
     else:
         return 1
     pass
+
 
 def left_merge_dataset(left_dframe, right_dframe, merge_column):
     return pd.merge(left_dframe, right_dframe, on=merge_column, how='left')
@@ -90,51 +91,7 @@ def convert_datetime(df):
     return df
 
 
-def remove_nan_columns(data, feats_to_delete_path):
-    """
-    Remove all columns with over 90% missing data, as explored previously in the EDA.
-
-    :param data: Pandas DataFrame which contains the entire dataset.
-    :param feats_to_delete_path: path to a pickle file (.pkl) that contains a list of features with over 90%
-        missing values, which are to be removed
-    :return: data (Pandas DataFrame with columns removed)
-    """
-    # Load in the list from the pickle file.
-    with open(feats_to_delete_path, 'rb') as f:
-        cols_to_drop = pickle.load(f)
-
-    # Remove the columns.
-    data.drop(cols_to_drop, axis=1, inplace=True)
-    logging.info(f"Removed the following columns: {cols_to_drop}.")
-
-    return data
-
-
 # TODO: aggregate and remove the comp_columns
-
-# TODO Jupyter code
-
-def impute_nan_values(resampled_df):
-    # Load in DataFrames dictionaries for replacing NaN values
-    review_df = load_in_data('./reuseables/prop_review_df.csv')
-    loc_df = load_in_data('./reuseables/prop_location_score2.csv')
-    orig_df = load_in_data('./reuseables/orig_destination_distance.csv')
-
-    print(resampled_df["prop_location_score2"].isnull().sum())
-    empty_indices = np.where(pd.isnull(resampled_df["prop_location_score2"]))
-
-    for i in empty_indices:
-        row = resampled_df["prop_id"].iloc[i]
-        for ix, prop_id in row.items():
-            value = loc_df.loc[review_df["prop_id"] == prop_id, "prop_location_score2"]
-            resampled_df.loc[(resampled_df["prop_id"] == prop_id) & (resampled_df["prop_location_score2"].isnull()), "prop_location_score2"] =
-            # print(resampled_df["prop_location_score2"].loc[resampled_df["prop_id"] == prop_id].fillna(value, inplace=True))
-            # print(resampled_df["prop_review_score"])#.loc[resampled_df["prop_id"]==prop_id])
-            # resampled_df["prop_review_score"] = resampled_df["prop_review_score"].loc[resampled_df["prop_id"] == prop_id].fillna(value, inplace=True)
-
-    print(resampled_df["prop_location_score2"].isnull().sum())
-
-    return resampled_df
 
 
 def run():
@@ -142,14 +99,10 @@ def run():
     # data = convert_datetime(data)
     # data = remove_nan_columns(data, feats_to_delete_path)
     # data.to_csv(cleaned_filepath)
-
-    # filter_df = data[["prop_id", "srch_id", "prop_location_score2", "prop_review_score", "orig_destination_distance"]]
-
     # save_columns(filter_df)
 
     resampled_data = load_in_data(resampled_filepath)
-    resampled_data = impute_nan_values(resampled_data)
-    resampled_data.to_csv(complete_filepath)
+    impute_nan_values(resampled_data)
 
 
 if __name__ == "__main__":
