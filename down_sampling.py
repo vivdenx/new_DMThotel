@@ -21,22 +21,22 @@ def negative_down_sampling(cleaned_data_filepath, resampled_out_filepath):
     data = load_in_data(cleaned_data_filepath)
 
     # Find all indexes of the book data and create a random sample of the same length.
-    book_indices = data[data.book_bool == 1].index
-    random_indices = np.random.choice(book_indices, len(data.loc[data.book_bool == 1]), replace=False)
+    book_indices = data[data.booking_bool == 1].index
+    random_indices = np.random.choice(book_indices, len(data.loc[data.booking_bool == 1]), replace=False)
     book_sample = data.loc[random_indices]
 
     # Find all indexes of the non-book data and
     # create a random sample of the same length as the book data to balance out the dataset.
-    not_book = data[data.book_bool == 0].index
-    random_indices = np.random.choice(not_book, sum(data['book_bool']), replace=False)
+    not_book = data[data.booking_bool == 0].index
+    random_indices = np.random.choice(not_book, sum(data['booking_bool']), replace=False)
     not_book_sample = data.loc[random_indices]
 
     # Combine the book and non-book samples.
     data_new = pd.concat([not_book_sample, book_sample], axis=0)
 
     # Get the percentages of book and non-book.
-    percentage_non_book = len(data_new[data_new.book_bool == 0]) / len(data_new)
-    percentage_book = len(data_new[data_new.book_bool == 1]) / len(data_new)
+    percentage_non_book = len(data_new[data_new.booking_bool == 0]) / len(data_new)
+    percentage_book = len(data_new[data_new.booking_bool == 1]) / len(data_new)
 
     logging.info(f"Percentage of non-book impressions: {percentage_non_book}.\n"
                  f"Percentage of book impressions: {percentage_book}.\n"
