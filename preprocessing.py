@@ -39,6 +39,30 @@ def get_month(x):
         return 1
     pass
 
+def get_hour(x):
+    if x is not None and type(x) is not float:
+        try:
+            return datetime.strptime(x, '%Y-%m-%d').hour
+        except:
+            return datetime.strptime(x, '%Y-%m-%d %H:%M:%S').hour
+    else:
+        return 1
+    pass
+
+def get_timeblock(x):
+    if x is not None and type(x) is not float:
+        if 5 <= x and x < 12:
+            timeblock = 'Mo'
+        elif 12 <= x and x < 18:
+            timeblock = 'Af'
+        elif 18 <= x and x < 22:
+            timeblock = 'Ev'
+        elif 22 <= x or x < 5:
+            timeblock = 'Ni'
+        return timeblock
+    else:
+        return 1
+    pass
 
 def left_merge_dataset(left_dframe, right_dframe, merge_column):
     return pd.merge(left_dframe, right_dframe, on=merge_column, how='left')
@@ -54,9 +78,13 @@ def convert_datetime(df):
 
     df['date_time_year'] = pd.Series(df.date_time, index=df.index)
     df['date_time_month'] = pd.Series(df.date_time, index=df.index)
+    df['date_time_hour'] = pd.Series(df.date_time, index=df.index)
+    df['date_time_block'] = pd.Series(df.date_time_hour, index=df.index)
 
     df.date_time_year = df.date_time_year.apply(lambda x: get_year(x))
     df.date_time_month = df.date_time_month.apply(lambda x: get_month(x))
+    df.date_time_hour = df.date_time_hour.apply(lambda x: get_hour(x))
+    df.date_time_block = df.date_time_block.apply(lambda x: get_timeblock(x))
     del df['date_time']
     logging.info('Converted date_time column into date_time format.')
     return df
