@@ -61,7 +61,7 @@ def get_missing_values(complete_df, eda_num):
         delete = missing.loc[missing["percentage"] > 90]
         feats_to_delete = delete.index.to_list()
         logging.info(f"These features contain over 90% missing data: {feats_to_delete}.")
-        with open('reuseables/feats_to_delete.pkl', 'wb') as f:
+        with open('preprocessing/reuseables/feats_to_delete.pkl', 'wb') as f:
             pickle.dump(feats_to_delete, f)
 
 

@@ -1,8 +1,7 @@
 import pandas as pd
 import numpy as np 
 import matplotlib.pyplot as plt
-import preprocessing as prep
-from down_sampling import negative_down_sampling
+from preprocessing.down_sampling import down_sampling
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
@@ -28,7 +27,7 @@ def read():
     data['hour'] = pd.to_datetime(data['date_time']).dt.hour
     data.drop(cols_to_drop, axis=1, inplace=True)
     #print(data.columns)
-    down = negative_down_sampling(data)
+    down = down_sampling(data)
     down.to_csv("./down_1.csv")
 
 
