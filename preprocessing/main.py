@@ -65,7 +65,6 @@ def main():
 
     resampled_data = convert_dates.convert_datetime(resampled_data)
     imputed_data = impute_nan_values.impute_nan_values(resampled_data)
-
     imputed_data.to_csv(complete_filepath, index=False)
 
 

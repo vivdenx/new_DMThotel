@@ -31,9 +31,9 @@ def get_month(x):
 def get_weekday(x):
     if x is not None and type(x) is not float:
         try:
-            return datetime.strptime(x, '%Y-%m-%d').weekday
+            return datetime.strptime(x, '%Y-%m-%d').weekday()
         except:
-            return datetime.strptime(x, '%Y-%m-%d %H:%M:%S').weekday
+            return datetime.strptime(x, '%Y-%m-%d %H:%M:%S').weekday()
     else:
         return 1
     pass
