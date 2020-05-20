@@ -2,6 +2,7 @@ import logging
 import pickle
 
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import seaborn as sns
 
@@ -172,7 +173,8 @@ def get_heatmap(data):
 
     ax = sns.heatmap(data_corr.sort_values(by=['prop_id'], ascending=False), vmin=-1, vmax=1, center=0, cmap='coolwarm',
                      square=True, mask=mask)
-    plt.savefig('./figures/heatmap.png')
+    plt.tight_layout()
+    plt.savefig('./figures/EDA_heatmap.png')
 
 
 def check_click_booking_bool(data):
@@ -193,7 +195,11 @@ def check_click_booking_bool(data):
     y = [click_rate, booking_rate]
 
     plt.bar(x, y)
+    plt.ylabel('Percentage')
+    plt.title('Percentage of clicked and booked properties in the dataset.')
+    plt.tight_layout()
     plt.savefig('./figures/EDA_click_book_bool.png')
+
 
 # Alter filepath depending on where you have the data stored.
 # original_training_filepath = '../VU_DMT_assignment2/training_set_VU_DM.csv'
@@ -204,7 +210,9 @@ def eda1():
     training_data = load_in_data(training_filepath)
     test_data = load_in_data(test_filepath)
 
-    get_missing_values(training_data, 1)
+    # get_missing_values(training_data, 1)
+    print(training_data.corr()["prop_id"].sort_values())
+
     # Remove missing values in pre_processing.
 
 
@@ -213,22 +221,15 @@ def eda2():
     cleaned_training_data = load_in_data(cleaned_training_filepath)
 
     # get_missing_values(cleaned_training_data, 2)
-    # print(cleaned_training_data.corr()["prop_id"].sort_values())
+    print(cleaned_training_data.corr()["prop_id"].sort_values())
     # explore_prop_id(cleaned_training_data)
-
-    check_click_booking_bool(cleaned_training_data)
-
-    # search_length_of_stay(data)
-    # search_adults_counts(data)
-    # search_property_star_rating(data)
-    # check_property_brand(data)
-    # check_stay_sat(data)
-    # check_price(data)
-    # get_heatmap(data)
+    DATA = load_in_data('./data/new_cleaned_data_dates.csv')
+    get_heatmap(DATA)
+    # check_click_booking_bool(cleaned_training_data)
 
 
 def run():
-    # eda1()
+    eda1()
     eda2()
 
 
